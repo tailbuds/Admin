@@ -266,6 +266,7 @@
           <v-card-text>
             <v-btn class="ma-2" color="#191919" href="update/+breedId" target="_blank" dark>Edit</v-btn>
             <v-btn class="ma-2" color="#191919" href="dele/+breedId" target="_blank" dark>Delete</v-btn>
+            <!-- localhost delete api route -->
           </v-card-text>
         </v-card>
       </v-col>
