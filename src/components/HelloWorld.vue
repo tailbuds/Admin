@@ -242,7 +242,7 @@
 
           <v-row>
             <v-col cols="12" md="12">
-              <v-file-input multiple v-model="images" accept="image/*" label="images"></v-file-input>
+              <v-file-input multiple v-model="images" accept="image/*" ref="file" label="images"></v-file-input>
             </v-col>
           </v-row>
           <v-btn
@@ -338,6 +338,13 @@ export default {
 
   methods: {
     submitBreed: function() {
+      let formData = new FormData();
+      for (var i = 0; i < this.$refs.file.files.length; i++) {
+        let file = this.$refs.file.files[i];
+        console.log(file);
+        formData.append("files[" + i + "]", file);
+      }
+
       var name = this.name;
       var tagline = this.tagline;
       var bgImg = this.bgImg;
@@ -375,52 +382,65 @@ export default {
       var desc13 = this.desc13;
       var desc14 = this.desc14;
       var desc15 = this.desc15;
-      var images = this.images;
+      // var images = this.images;
       axios
-        .post(url.url + "/breeds", {
-          name: name,
-          tagline: tagline,
-          bgImg: bgImg,
-          puppyImg: puppyImg,
-          minLife: minLife,
-          maxLife: maxLife,
-          learningRate: learningRate,
-          minLitter: minLitter,
-          maxLitter: maxLitter,
-          size: size,
-          weightUnit: weightUnit,
-          minMaleWeight: minMaleWeight,
-          maxMaleWeight: maxMaleWeight,
-          minFemaleWeight: minFemaleWeight,
-          maxFemaleWeight: maxFemaleWeight,
-          heigthUnit: heigthUnit,
-          minMaleHeight: minMaleHeight,
-          maxMaleHeight: maxMaleHeight,
-          minFemaleHeight: minFemaleHeight,
-          maxFemaleHeight: maxFemaleHeight,
-          originCountry: originCountry,
-          otherNames: otherNames,
-          desc1: desc1,
-          desc2: desc2,
-          desc3: desc3,
-          desc4: desc4,
-          desc5: desc5,
-          desc6: desc6,
-          desc7: desc7,
-          desc8: desc8,
-          desc9: desc9,
-          desc10: desc10,
-          desc11: desc11,
-          desc12: desc12,
-          desc13: desc13,
-          desc14: desc14,
-          desc15: desc15,
-          images: images
-        })
+        .post(
+          url.url + "/breeds",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          },
+          {
+            name: name,
+            tagline: tagline,
+            bgImg: bgImg,
+            puppyImg: puppyImg,
+            minLife: minLife,
+            maxLife: maxLife,
+            learningRate: learningRate,
+            minLitter: minLitter,
+            maxLitter: maxLitter,
+            size: size,
+            weightUnit: weightUnit,
+            minMaleWeight: minMaleWeight,
+            maxMaleWeight: maxMaleWeight,
+            minFemaleWeight: minFemaleWeight,
+            maxFemaleWeight: maxFemaleWeight,
+            heigthUnit: heigthUnit,
+            minMaleHeight: minMaleHeight,
+            maxMaleHeight: maxMaleHeight,
+            minFemaleHeight: minFemaleHeight,
+            maxFemaleHeight: maxFemaleHeight,
+            originCountry: originCountry,
+            otherNames: otherNames,
+            desc1: desc1,
+            desc2: desc2,
+            desc3: desc3,
+            desc4: desc4,
+            desc5: desc5,
+            desc6: desc6,
+            desc7: desc7,
+            desc8: desc8,
+            desc9: desc9,
+            desc10: desc10,
+            desc11: desc11,
+            desc12: desc12,
+            desc13: desc13,
+            desc14: desc14,
+            desc15: desc15
+            // images: images
+          }
+        )
         .then(response => {
           console.log(response);
         })
         .catch(err => console.log(err));
+    },
+
+    handleImagesUpload() {
+      this.images = this.$refs.images.images;
     }
   }
 };
