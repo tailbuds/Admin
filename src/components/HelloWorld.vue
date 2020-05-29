@@ -16,11 +16,11 @@
 
           <v-row>
             <v-col cols="12" md="6">
-              <v-file-input v-model="bg" accept="image/*" label="bg-img"></v-file-input>
+              <v-file-input v-model="bgImg" accept="image/*" label="bg-img"></v-file-input>
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-file-input v-model="puppy" accept="image/*" label="puppy-img"></v-file-input>
+              <v-file-input v-model="puppyImg" accept="image/*" label="puppy-img"></v-file-input>
             </v-col>
           </v-row>
           <v-row>
@@ -29,7 +29,7 @@
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-text-field v-model="maxlife" type="number" min="0" label="maxlife" required></v-text-field>
+              <v-text-field v-model="maxLife" type="number" min="0" label="maxlife" required></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -166,7 +166,7 @@
 
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field outlined v-model="desc1" type="text" label="desc1" required></v-text-field>
+              <v-text-field outlined v-model="desc1" auto-grow type="text" label="desc1" required></v-text-field>
             </v-col>
 
             <v-col cols="12" md="6">
@@ -242,7 +242,7 @@
 
           <v-row>
             <v-col cols="12" md="12">
-              <v-file-input multiple v-model="images" accept="image/*" ref="file" label="images"></v-file-input>
+              <v-text-field v-model="images" label="images"></v-text-field>>
             </v-col>
           </v-row>
           <v-btn
@@ -265,7 +265,19 @@
 
           <v-card-text>
             <v-btn class="ma-2" color="#191919" href="update/+breedId" target="_blank" dark>Edit</v-btn>
-            <v-btn class="ma-2" color="#191919" href="dele/+breedId" target="_blank" dark>Delete</v-btn>
+            <v-dialog v-model="dialog" persistent max-width="290">
+              <template v-slot:activator="{ on }">
+                <v-btn color="primary" dark v-on="on">Delete</v-btn>
+              </template>
+              <v-card>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" text @click="dialog = false">Cancel</v-btn>
+                  <v-btn color="green darken-1" text @click="deleteBreed">Delete</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <!-- <v-btn class="ma-2" color="#191919" href="dele/+breedId" target="_blank" dark>Delete</v-btn> -->
             <!-- localhost delete api route -->
           </v-card-text>
         </v-card>
@@ -295,27 +307,28 @@ export default {
 
   data() {
     return {
+      dialog: false,
       name: "",
       tagline: "",
       bgImg: "",
       puppyImg: "",
-      minLife: " ",
-      maxLife: "",
+      minLife: null,
+      maxLife: null,
       learningRate: "",
-      minLitter: "",
-      maxLitter: "",
+      minLitter: null,
+      maxLitter: null,
       size: "",
-      weightUnit: "",
-      minMaleWeight: "",
-      maxMaleWeight: "",
-      minFemaleWeight: "",
-      maxFemaleWeight: "",
-      heigthUnit: "",
-      minMaleHeight: "",
-      maxMaleHeight: "",
-      minFemaleHeight: "",
-      maxFemaleHeight: "",
-      originCountry: "",
+      weightUnit: "9",
+      minMaleWeight: null,
+      maxMaleWeight: null,
+      minFemaleWeight: null,
+      maxFemaleWeight: null,
+      heigthUnit: "13",
+      minMaleHeight: null,
+      maxMaleHeight: null,
+      minFemaleHeight: null,
+      maxFemaleHeight: null,
+      originCountry: "6",
       otherNames: "",
       desc1: "",
       desc2: "",
@@ -332,18 +345,18 @@ export default {
       desc13: "",
       desc14: "",
       desc15: "",
-      images: ""
+      images: null
     };
   },
 
   methods: {
     submitBreed: function() {
-      let formData = new FormData();
-      for (var i = 0; i < this.$refs.file.files.length; i++) {
-        let file = this.$refs.file.files[i];
-        console.log(file);
-        formData.append("files[" + i + "]", file);
-      }
+      // let formData = new FormData();
+      // for (var i = 0; i < this.$refs.file.files.length; i++) {
+      //   let file = this.$refs.file.files[i];
+      //   console.log(file);
+      //   formData.append("files[" + i + "]", file);
+      // }
 
       var name = this.name;
       var tagline = this.tagline;
@@ -382,16 +395,11 @@ export default {
       var desc13 = this.desc13;
       var desc14 = this.desc14;
       var desc15 = this.desc15;
-      // var images = this.images;
+      var images = this.images;
       axios
         .post(
           url.url + "/breeds",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          },
+
           {
             name: name,
             tagline: tagline,
@@ -429,8 +437,8 @@ export default {
             desc12: desc12,
             desc13: desc13,
             desc14: desc14,
-            desc15: desc15
-            // images: images
+            desc15: desc15,
+            images: images
           }
         )
         .then(response => {
@@ -439,8 +447,18 @@ export default {
         .catch(err => console.log(err));
     },
 
-    handleImagesUpload() {
-      this.images = this.$refs.images.images;
+    // handleImagesUpload() {
+    //   this.images = this.$refs.images.images;
+    // },
+
+    deleteBreed() {
+      axios
+        .delete(url.url + "/breeds")
+        .then(res => {
+          console.log(res);
+          this.dialog = false;
+        })
+        .catch();
     }
   }
 };
