@@ -356,9 +356,9 @@ export default {
       this.files = [...this.files, ...files];
       console.log(files);
       const formData = new formData();
-      // _.forEach(this.files, file => {
-      //   formData.append("files", file);
-      // });
+      _.forEach(this.files, file => {
+        formData.append("files", file);
+      });
 
       let formData1 = new FormData();
       formData1.append("file", this.bgImg);
